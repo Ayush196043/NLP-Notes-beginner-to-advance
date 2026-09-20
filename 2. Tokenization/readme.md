@@ -1,58 +1,66 @@
-# 🔤 Tokenization using spaCy
+# 🧠 Part of Speech (POS) Tagging with spaCy
 
-This project demonstrates **Tokenization in NLP using spaCy**. Tokenization is one of the most important preprocessing steps in Natural Language Processing (NLP), where a text is divided into smaller meaningful units called **tokens**.
+> **Part of Speech (POS) Tagging** is an important Natural Language Processing (NLP) technique used to identify the grammatical category of each word in a sentence.
 
-In this project, we use the **spaCy NLP library** to tokenize a given text into words, punctuation marks, and other linguistic units.
+This notebook demonstrates how to perform **POS Tagging using spaCy**, understand the difference between **POS tags and detailed grammatical tags**, identify grammatical information such as **verb tense**, remove unwanted tokens, and analyze the frequency of different POS categories in a text.
 
 ---
 
-## 📌 What is Tokenization?
+## 📌 What is Part of Speech?
 
-**Tokenization** is the process of breaking a sentence or paragraph into smaller pieces called **tokens**.
+In Natural Language Processing, **Part of Speech (POS)** tells us what role a word plays in a sentence.
 
 For example:
 
 ```text
-Input:
-"Python is an amazing language!"
-
-Tokens:
-Python
-is
-an
-amazing
-language
-!
+Elon flew to Mars yesterday.
 ```
 
-Each individual word or punctuation mark is treated as a separate token.
+The words can be classified approximately as:
 
-### Why is Tokenization Important?
+| Word      | POS         |
+| --------- | ----------- |
+| Elon      | Proper Noun |
+| flew      | Verb        |
+| to        | Adposition  |
+| Mars      | Proper Noun |
+| yesterday | Adverb      |
 
-Tokenization is usually one of the first steps in an NLP pipeline.
-
-It helps us to:
-
-* Split text into words
-* Identify punctuation
-* Process individual words
-* Perform text preprocessing
-* Prepare text for Machine Learning models
-* Perform tasks such as POS Tagging, NER and Lemmatization
+POS tagging helps a machine understand the **grammatical structure and role of words** in natural language.
 
 ---
 
-## 🚀 Technologies Used
+# 🚀 What This Notebook Covers
+
+This notebook covers the following concepts:
+
+* Installing and importing spaCy
+* Loading the English language pipeline
+* Tokenization
+* POS Tagging
+* Understanding `token.pos_`
+* Understanding `token.tag_`
+* Using `spacy.explain()`
+* Identifying verb tense
+* Removing unwanted tokens
+* Filtering `SPACE`, `PUNCT`, and `X`
+* Counting POS categories
+* Understanding `doc.count_by()`
+* Working with real-world text
+
+---
+
+# 🛠️ Technologies Used
 
 * **Python**
 * **spaCy**
-* **NLP (Natural Language Processing)**
+* **Natural Language Processing (NLP)**
 
 ---
 
-## 📦 Installation
+# 📦 Installation
 
-First, install spaCy using pip:
+First, install spaCy:
 
 ```bash
 pip install spacy
@@ -64,344 +72,452 @@ Then download the English language model:
 python -m spacy download en_core_web_sm
 ```
 
----
-
-## 💻 Code
-
-```python
-import spacy
-
-# Load English language model
-nlp = spacy.load("en_core_web_sm")
-
-# Input text
-text = "Python is an amazing programming language!"
-
-# Process the text
-doc = nlp(text)
-
-# Print tokens
-for token in doc:
-    print(token.text)
-```
-
----
-
-## 📤 Output
-
-The above code produces output similar to:
-
-```text
-Python
-is
-an
-amazing
-programming
-language
-!
-```
-
-Here, spaCy automatically identifies individual tokens from the input text.
-
----
-
-## 🔍 Understanding the Code
-
-### 1. Import spaCy
+Import spaCy:
 
 ```python
 import spacy
 ```
 
-This imports the spaCy library into our Python program.
-
 ---
 
-### 2. Load the NLP Model
+# 🔤 Loading the English NLP Pipeline
+
+The notebook uses spaCy's small English language model:
 
 ```python
 nlp = spacy.load("en_core_web_sm")
-```
-
-`en_core_web_sm` is a small English language model provided by spaCy.
-
-The `nlp` object is used to process text and create a `Doc` object.
-
----
-
-### 3. Provide Input Text
-
-```python
-text = "Python is an amazing programming language!"
-```
-
-This is the text that we want to tokenize.
-
----
-
-### 4. Process the Text
-
-```python
-doc = nlp(text)
-```
-
-spaCy processes the input text and creates a **Doc object**.
-
-The `Doc` contains the linguistic information extracted from the text.
-
----
-
-### 5. Access Individual Tokens
-
-```python
-for token in doc:
-    print(token.text)
 ```
 
 Here:
 
-* `token` → represents one individual token
-* `token.text` → gives the actual text of that token
+* `spacy.load()` loads a trained NLP pipeline.
+* `en_core_web_sm` is spaCy's small English language model.
+* `nlp` becomes the NLP processing pipeline.
 
-For example:
+We can then process text using:
 
 ```python
-token.text
+doc = nlp("A Person Elon flew to mars yesterday.")
 ```
 
-may return:
-
-```text
-Python
-```
-
-or:
-
-```text
-is
-```
-
-or:
-
-```text
-!
-```
+The resulting `doc` contains processed tokens along with linguistic information.
 
 ---
 
-## 🧠 Important spaCy Concepts
+# 🏷️ POS Tagging
 
-### `Doc`
+POS tagging assigns a grammatical category to every token.
 
-A `Doc` is the container that holds the processed text.
+Example:
 
 ```python
-doc = nlp(text)
+doc = nlp("A Person Elon flew to mars yesterday.")
+
+for word in doc:
+    print(word, "|", word.pos_, "|", spacy.explain(word.pos_))
 ```
 
----
+### Important attributes
 
-### `Token`
+### `word.text`
 
-A `Token` represents an individual unit of text.
-
-```python
-for token in doc:
-    print(token)
-```
-
----
-
-### `token.text`
-
-Returns the original text of the token.
+Returns the actual text of the token.
 
 ```python
-for token in doc:
-    print(token.text)
-```
-
----
-
-### `token.is_alpha`
-
-Checks whether the token contains alphabetic characters.
-
-```python
-for token in doc:
-    print(token.text, token.is_alpha)
+word.text
 ```
 
 Example:
 
 ```text
-Python True
-is True
-amazing True
-! False
+Elon
 ```
 
----
+### `word.pos_`
 
-### `token.is_punct`
-
-Checks whether a token is punctuation.
+Returns the **coarse-grained Part of Speech**.
 
 ```python
-for token in doc:
-    print(token.text, token.is_punct)
+word.pos_
 ```
 
-Example:
+Examples include:
 
 ```text
-! True
+NOUN
+PROPN
+VERB
+ADJ
+ADV
+PRON
+ADP
+DET
 ```
 
----
+### `spacy.explain()`
 
-### `token.is_stop`
-
-Checks whether a token is a **stop word**.
+Provides a human-readable explanation of a spaCy tag.
 
 ```python
-for token in doc:
-    print(token.text, token.is_stop)
+spacy.explain(word.pos_)
 ```
 
 For example:
 
 ```text
-is True
-the True
-Python False
+PROPN → proper noun
+VERB  → verb
+ADV   → adverb
 ```
 
 ---
 
-## 🔬 Example with Multiple Token Properties
+# 🔎 POS Tagging Example
+
+The notebook also processes:
 
 ```python
-import spacy
-
-nlp = spacy.load("en_core_web_sm")
-
-text = "Python is easy to learn!"
-
-doc = nlp(text)
+doc = nlp("Wow! Dr. Strange made 265 million $ on the very first day")
 
 for token in doc:
     print(
-        token.text,
-        token.is_alpha,
-        token.is_punct,
-        token.is_stop
+        token,
+        "|",
+        token.pos_,
+        "|",
+        spacy.explain(token.pos_)
     )
 ```
 
-Output:
+This example demonstrates that spaCy can assign grammatical information not only to normal words but also to:
 
-```text
-Python True False False
-is True False True
-easy True False False
-to True False True
-learn True False False
-! False True False
-```
+* punctuation
+* numbers
+* symbols
+* proper nouns
+* determiners
+* prepositions/adpositions
 
 ---
 
-## 📚 Tokenization in NLP Pipeline
+# 🏷️ POS vs Detailed TAG
 
-Tokenization is generally performed at the beginning of an NLP pipeline.
+One of the important concepts demonstrated in this notebook is the difference between:
+
+```python
+token.pos_
+```
+
+and
+
+```python
+token.tag_
+```
+
+### `token.pos_`
+
+Provides a **coarse-grained POS category**.
+
+Example:
+
+```text
+VERB
+NOUN
+PROPN
+ADJ
+ADV
+```
+
+### `token.tag_`
+
+Provides a **more detailed grammatical tag**.
+
+For example, different forms of verbs can receive different detailed tags.
+
+The notebook demonstrates this using:
+
+```python
+print(
+    token,
+    "|",
+    token.pos_,
+    "|",
+    spacy.explain(token.pos_),
+    "|",
+    token.tag_,
+    "|",
+    spacy.explain(token.tag_)
+)
+```
+
+This allows us to inspect both the general POS category and its more specific grammatical information.
+
+---
+
+# ⏳ Understanding Verb Tense
+
+The notebook demonstrates how spaCy can distinguish different grammatical forms of the same verb.
+
+### Example 1
+
+```python
+doc = nlp("He quits the job")
+
+print(
+    doc[1].text,
+    "|",
+    doc[1].tag_,
+    "|",
+    spacy.explain(doc[1].tag_)
+)
+```
+
+### Example 2
+
+```python
+doc = nlp("he quit the job")
+
+print(
+    doc[1].text,
+    "|",
+    doc[1].tag_,
+    "|",
+    spacy.explain(doc[1].tag_)
+)
+```
+
+Although the words are closely related:
+
+```text
+quits
+quit
+```
+
+spaCy assigns different detailed grammatical tags based on their usage.
+
+This demonstrates why `token.tag_` can provide more detailed information than `token.pos_`.
+
+---
+
+# 🧹 Removing Unwanted Tokens
+
+Real-world text contains many tokens that may not be useful for certain NLP tasks.
+
+For example:
+
+* Spaces
+* Punctuation
+* Unknown or other tokens
+
+The notebook demonstrates how to remove:
+
+```text
+SPACE
+PUNCT
+X
+```
+
+The filtering condition is:
+
+```python
+filtered_tokens = []
+
+for token in doc:
+    if token.pos_ not in ["SPACE", "PUNCT", "X"]:
+        filtered_tokens.append(token)
+```
+
+After processing, `filtered_tokens` contains only the tokens that satisfy our filtering condition.
+
+We can inspect them using:
+
+```python
+filtered_tokens[:20]
+```
+
+This technique can be useful during **text preprocessing**.
+
+---
+
+# 📊 Counting POS Categories
+
+spaCy provides a convenient method for counting POS categories:
+
+```python
+count = doc.count_by(spacy.attrs.POS)
+```
+
+The result is a dictionary-like structure where:
+
+```text
+key   → POS attribute ID
+value → number of occurrences
+```
+
+Example:
+
+```python
+count
+```
+
+To convert the POS IDs into readable names:
+
+```python
+for k, v in count.items():
+    print(doc.vocab[k].text, "|", v)
+```
+
+This gives output conceptually similar to:
+
+```text
+NOUN  | 10
+VERB  | 8
+PROPN | 6
+ADJ   | 4
+ADV   | 3
+```
+
+The exact counts depend on the input text.
+
+---
+
+# 🧠 Understanding `doc.count_by()`
+
+The following code:
+
+```python
+doc.count_by(spacy.attrs.POS)
+```
+
+asks spaCy to count tokens according to their POS attribute.
+
+This is useful when we want to perform simple linguistic analysis on a large document.
+
+For example, we can determine:
+
+* How many nouns are present?
+* How many verbs are present?
+* How many adjectives are present?
+* How many adverbs are present?
+
+---
+
+# 🔢 Understanding `doc.vocab`
+
+The notebook also demonstrates:
+
+```python
+doc.vocab[96].text
+```
+
+spaCy internally represents many linguistic attributes using integer IDs.
+
+`doc.vocab` provides access to spaCy's vocabulary, allowing these IDs to be mapped back to their corresponding string representations.
+
+For example:
+
+```python
+doc.vocab[k].text
+```
+
+converts a vocabulary ID into a readable text representation.
+
+---
+
+# 🔄 Overall NLP Pipeline
+
+The basic workflow demonstrated in this notebook can be represented as:
 
 ```text
 Raw Text
    ↓
-Tokenization
+spaCy NLP Pipeline
    ↓
-Text Preprocessing
+Tokenization
    ↓
 POS Tagging
    ↓
-Lemmatization
+Detailed Grammatical Tagging
    ↓
-Named Entity Recognition
+Token Filtering
    ↓
-Machine Learning / NLP Task
-```
-
-Tokenization provides the basic structure required for many downstream NLP tasks.
-
----
-
-## 🎯 Learning Outcomes
-
-After completing this project, you should understand:
-
-* What Tokenization is
-* Why Tokenization is important in NLP
-* How to tokenize text using spaCy
-* What `Doc` and `Token` objects are
-* How to use `token.text`
-* How to identify punctuation
-* How to identify alphabetic tokens
-* How to identify stop words
-* How spaCy processes natural language text
-
----
-
-## 🛠️ Project Structure
-
-```text
-Tokenization/
-│
-├── tokenization.py
-├── README.md
-└── requirements.txt
-```
-
-If you are using `requirements.txt`, you can add:
-
-```text
-spacy
-```
-
-Then install dependencies using:
-
-```bash
-pip install -r requirements.txt
+POS Frequency Analysis
 ```
 
 ---
 
-## 🌱 Future Improvements
+# 📚 Important spaCy Attributes Used
 
-This project can be extended by implementing:
-
-* Sentence Tokenization
-* Stop Word Removal
-* Lemmatization
-* Stemming
-* Part-of-Speech (POS) Tagging
-* Named Entity Recognition (NER)
-* Dependency Parsing
-* Custom Tokenization Rules
+| Attribute / Function | Purpose                      |
+| -------------------- | ---------------------------- |
+| `spacy.load()`       | Loads an NLP model           |
+| `nlp()`              | Processes text               |
+| `doc`                | Processed document           |
+| `token`              | Individual token             |
+| `token.text`         | Original token text          |
+| `token.pos_`         | Coarse POS category          |
+| `token.tag_`         | Detailed grammatical tag     |
+| `spacy.explain()`    | Explains a tag               |
+| `doc.count_by()`     | Counts linguistic attributes |
+| `doc.vocab`          | Accesses spaCy vocabulary    |
 
 ---
 
-## 👨‍💻 Author
+# 🎯 Why POS Tagging is Important in NLP
+
+POS tagging is a fundamental NLP technique and is used in many applications such as:
+
+* Text classification
+* Information extraction
+* Named Entity Recognition
+* Question answering
+* Sentiment analysis
+* Chatbots
+* Text summarization
+* Grammar analysis
+* Machine translation
+* Search engines
+* Linguistic analysis
+
+It provides machines with information about **how words function inside sentences**.
+
+---
+
+# 💡 Key Takeaways
+
+After completing this notebook, you should understand:
+
+1. What Part of Speech means.
+2. How spaCy performs POS tagging.
+3. How to use `token.pos_`.
+4. How `token.tag_` provides more detailed grammatical information.
+5. How `spacy.explain()` helps understand tags.
+6. How spaCy can distinguish different grammatical forms of verbs.
+7. How to remove `SPACE`, `PUNCT`, and `X` tokens.
+8. How to count POS categories using `doc.count_by()`.
+9. How spaCy's vocabulary IDs can be mapped to readable labels.
+10. How POS tagging fits into an NLP preprocessing pipeline.
+
+---
+
+# 📖 References
+
+The notebook uses the following references for understanding POS categories and linguistic concepts:
+
+* spaCy Annotation Documentation
+* Wikipedia — Part of Speech
+* Wikipedia — Preposition and Postposition
+
+---
+
+# 👨‍💻 Author
 
 **Ayush Pandey**
 
-B.Tech Student | AI/ML & NLP Enthusiast
+This repository is part of my **NLP learning journey**, where I am documenting important NLP concepts and preprocessing techniques using Python and spaCy.
 
 ---
 
-## ⭐ Conclusion
-
-Tokenization is a fundamental concept in **Natural Language Processing**. Using spaCy, text can be efficiently divided into meaningful tokens while also providing useful linguistic information about each token.
-
-This project is part of my **NLP learning journey**, where I am exploring different NLP concepts and implementing them using Python and spaCy.
-
+> **अभ्यासेन तु कौन्तेय वैराग्येण च गृह्यते।**
+>
+> *Practice and consistent effort are the foundation of mastery.*
